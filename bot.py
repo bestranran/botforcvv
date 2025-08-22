@@ -1,19 +1,13 @@
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, MessageHandler, filters
 from config import TOKEN
-from database import init_db
-from handlers import start, button_handler, deposit_handler, add_product
+from handlers import start, button_handler, message_handler, admin_add_product, admin_list_products
 
-def main():
-    init_db()
-    app = ApplicationBuilder().token(TOKEN).build()
+app = ApplicationBuilder().token(TOKEN).build()
 
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(button_handler))
-    app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), deposit_handler))
-    app.add_handler(CommandHandler("add_product", add_product))
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CommandHandler("add_product", admin_add_product))
+app.add_handler(CommandHandler("list_products", admin_list_products))
+app.add_handler(CallbackQueryHandler(button_handler))
+app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, message_handler))
 
-    print("Bot started...")
-    app.run_polling()
-
-if __name__ == "__main__":
-    main()
+app.run_polling()
